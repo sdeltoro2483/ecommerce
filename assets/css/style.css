@@ -43,6 +43,26 @@ padding: 0 1rem;
 header > nav > i{
     font-size: 2rem;
     cursor: pointer;
+    position: relative;
+}
+.amountProducts{
+    width: 14px;
+    height: 14px;
+    font-size: 0.8rem;
+    background-color: #000000;
+    color: #ffffff;
+    display: inline-block;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    right: 11rem;
+    top: 15px;
+
+
+
 }
 
 .products {
@@ -74,6 +94,15 @@ gap: 1rem;
 .product_info span{
     font-weight: normal;
     font-size: 0.8rem;
+}
+
+.product_info .soldOut {
+    display: inline-block;
+    color: #ffffff;
+    background-color: lightcoral;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    user-select: none;
 }
 .product_info .bx-plus {
     background-color: #000000;

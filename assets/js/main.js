@@ -16,21 +16,26 @@
     function printProducts(db){
     const productsHtml= document.querySelector(".products");
          let  html= "";
-       
-        for (const product in db.products) {
+
+        console.log(db)
+        
+        for (const product of db.products) {
+          const buttonAdd =  product.quantity ? `<i class='bx bx-plus' id ="${product.id}"></i>`: "<span class='soldOut '>sold out<span/>"
+          
          html += `
         <div class="product">
             <div class="product__img">
              <img src="${product.image}"alt "imagen"/>
            </div>
-                 <div class="product_info">
+               <div class="product_info">
                     <h4>${product.name} | <span><b>Stock</b>: ${product.quantity}</span></h4>
                      <h5>
                       $${product.price}
-                         <i class='bx bx-plus' id ="${product.id}"></i>
+                      ${buttonAdd}
                   </h5>
-                   </div>
-            </div>
+              
+              </div>
+          </div>
             `;  
     } 
        productsHtml.innerHTML= html;
@@ -68,6 +73,7 @@
        window.localStorage.setItem("cart",JSON.stringify(db.cart));
         printProductsInCart(db);
         printTotal(db);
+        handlePrintAmountProduct(db);
          
      }
     });
@@ -105,6 +111,7 @@
     }
       cartProduct.innerHTML=html;
    }
+
    function handleProductosInCart (db){
     const cartProducts = document.querySelector(".cart_products");
     cartProducts.addEventListener("click", function(e){
@@ -139,6 +146,7 @@
       window.localStorage.setItem("cart",JSON.stringify(db.cart))
       printProductsInCart(db);
       printTotal(db);
+      handlePrintAmountProduct(db);
     })
    }
    function printTotal(db){
@@ -159,6 +167,52 @@
 
    }
 
+   function handleTotal(db){
+    const btnBuy =document.querySelector(".btn_buy");
+
+    btnBuy.addEventListener("click", function(){
+     if(!Object.values(db.cart).length) return alert("debes tener un producto en el carrito");
+
+      const response = confirm("estas seguro de esta compra?")
+      if(!response) return;
+
+      const currentProducts= []
+      for (const product of db.products) {
+       const productCart = db.cart[product.id];
+       if(product.id === productCart?.id){
+         currentProducts.push({
+           ...product,
+           quantity:product.quantity-productCart.amount,
+         });
+
+       } else{
+         currentProducts.push(product)
+       }
+       
+      }
+      db.products= currentProducts;
+      db.cart={};
+
+      window.localStorage.setItem("products",JSON.stringify(db.products));
+      window.localStorage.setItem("cart",JSON.stringify(db.cart));
+
+      printTotal(db);
+      printProductsInCart(db);
+      printProducts(db);
+      handlePrintAmountProduct(db);
+    })
+   }
+   function handlePrintAmountProduct(db){
+    const amountProducts= document.querySelector(".amountProducts");
+
+     let amount = 0;
+
+   for (const product in db.cart) {
+       amount += db.cart[product].amount
+    } 
+      amountProducts.textContent = amount;
+   }
+
   async function main(){
     const db= {
       products:JSON.parse(window.localStorage.getItem("products")) ||
@@ -172,36 +226,11 @@
      printProductsInCart(db);
      handleProductosInCart (db);
      printTotal(db);
+     handleTotal(db);
+     handlePrintAmountProduct(db);
+
      
-     const btnBuy =document.querySelector(".btn_buy");
-
-     btnBuy.addEventListener("click", function(){
-      if(!Object.values(db.cart).length) return alert("debes tener un producto en el carrito");
-
-       const response = confirm("estas seguro de esta compra?")
-       if(!response) return;
-
-       const currentProducts= []
-       for (const product of db.products) {
-        const productCart = db.cart[product.id];
-        if(product.id === productCart?.id){
-          currentProducts.push({
-            ...product,
-            quantity:product.quantity-productCart.amount,
-          });
-
-        } else{
-          currentProducts.push(product)
-        }
-        
-       }
-       db.products= currentProducts;
-       db.cart={};
-
-       window.localStorage.setItem("products",JSON.stringify(db.products));
-       window.localStorage.setItem("cart",JSON.stringify(db.cart));
-     })
-    }
+  }
 
 main();
     
